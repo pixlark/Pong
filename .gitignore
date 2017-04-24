@@ -1,0 +1,14 @@
+\#*\#
+*~
+*.o
+sfml-app
+*.tar.gz
+.\#*
+bin
+*.opensdf
+*.sdf
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+.vs
