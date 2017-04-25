@@ -3,11 +3,7 @@
 
 #include <stdint.h>
 
-namespace constants {
-
-	const uint32_t SCREEN_WIDTH = 640;
-	const uint32_t SCREEN_HEIGHT = 480;
-	
-}
+const uint32_t SCREEN_WIDTH = 1280;
+const uint32_t SCREEN_HEIGHT = 960;
 
 #endif

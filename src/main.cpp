@@ -5,8 +5,6 @@
 #include "game.hpp"
 #include "constants.hpp"
 
-using namespace ::constants;
-
 int main() {
 
 	sf::ContextSettings settings;
@@ -54,6 +52,30 @@ int main() {
 
 					if (window_event.key.code == sf::Keyboard::D || window_event.key.code == sf::Keyboard::Right) {
 						input_bits |= IRIGHT;
+					}
+
+				} break;
+
+				case sf::Event::KeyReleased: {
+
+					if (window_event.key.code == sf::Keyboard::Escape) {
+						running = false;
+					}
+
+					if (window_event.key.code == sf::Keyboard::W || window_event.key.code == sf::Keyboard::Up) {
+						input_bits &= ~IFORWARDS;
+					}
+
+					if (window_event.key.code == sf::Keyboard::A || window_event.key.code == sf::Keyboard::Left) {
+						input_bits &= ~ILEFT;
+					}
+
+					if (window_event.key.code == sf::Keyboard::S || window_event.key.code == sf::Keyboard::Down) {
+						input_bits &= ~IBACKWARDS;
+					}
+
+					if (window_event.key.code == sf::Keyboard::D || window_event.key.code == sf::Keyboard::Right) {
+						input_bits &= ~IRIGHT;
 					}
 
 				} break;
