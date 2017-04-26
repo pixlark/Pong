@@ -54,6 +54,10 @@ int main() {
 						input_bits |= IRIGHT;
 					}
 
+					if (window_event.key.code == sf::Keyboard::Return) {
+						input_bits |= IRETURN;
+					}
+
 				} break;
 
 				case sf::Event::KeyReleased: {
@@ -76,6 +80,10 @@ int main() {
 
 					if (window_event.key.code == sf::Keyboard::D || window_event.key.code == sf::Keyboard::Right) {
 						input_bits &= ~IRIGHT;
+					}
+
+					if (window_event.key.code == sf::Keyboard::Return) {
+						input_bits &= ~IRETURN;
 					}
 
 				} break;
