@@ -11,6 +11,8 @@ int main() {
 	settings.antialiasingLevel = 4;
 
 	sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Game", sf::Style::Close, settings);
+	window.setMouseCursorVisible(false);
+	window.setMouseCursorGrabbed(true);
 
 	Initialize();
 
@@ -92,7 +94,7 @@ int main() {
 
 		}
 
-		Update(delta_time);
+		Update(delta_time, &window);
 
 		window.clear();
 		Draw(&window);
