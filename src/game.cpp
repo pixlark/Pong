@@ -65,14 +65,12 @@ void Initialize() {
 	ball.ball_state = REGULAR;
 
 	// Slowdown powerup
-	slowdown_ball.shape = new sf::CircleShape;
+
+	slowdown_ball = {new sf::CircleShape, false, 8, 8, 25, 500, 0, 0};
 	slowdown_ball.shape->setFillColor(sf::Color::Green);
 	slowdown_ball.shape->setRadius(25);
 	slowdown_ball.shape->setOrigin(slowdown_ball.shape->getRadius(), slowdown_ball.shape->getRadius());
 	slowdown_ball.shape->setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
-	slowdown_ball.enabled = false;
-	slowdown_ball.cooldown = 10;
-	slowdown_ball.speed_effect = 500;
 
 	// Cursor
 	cursor.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
@@ -159,11 +157,11 @@ bool UpdateBallDirection(sf::Vector2f * ball_direction, sf::Vector2f ball_pos, c
 
 float GetBallSpeed(float game_time) {
 
-	if (game_time > 100)
+	if (game_time > 140)
 		return 1800;
-	else if (game_time > 75)
+	else if (game_time > 90)
 		return 1300;
-	else  if (game_time > 50)
+	else  if (game_time > 60)
 		return 1100;
 	else if (game_time > 30)
 		return 800;
@@ -178,7 +176,7 @@ float GetBallSpeed(float game_time) {
 
 bool GetSlowdownSpawn(float game_time, float delta_time) {
 
-	if (game_time > 20) {
+	if (game_time > 0) {
 		if (rand() % int(8'000'000 / delta_time) == 0) {
 			return true;
 		}
@@ -207,9 +205,18 @@ void Update(float delta_time, sf::RenderWindow * window) {
 		ball.next_speed = ball.base_speed + GetBallSpeed(game_time);
 
 		// Spawn powerups
-		slowdown_ball.spawn_cooldown -= delta_time;
-		if (GetSlowdownSpawn(game_time, delta_time) && slowdown_ball.spawn_cooldown <= 0) {
-			slowdown_ball.enabled = true;
+		if (!slowdown_ball.enabled) {
+			slowdown_ball.spawn_cooldown -= delta_time;
+			if (GetSlowdownSpawn(game_time, delta_time) && slowdown_ball.spawn_cooldown <= 0) {
+				slowdown_ball.enabled = true;
+				slowdown_ball.lifetime = slowdown_ball.max_lifetime;
+			}
+		} else {
+			slowdown_ball.lifetime -= delta_time;
+			if (slowdown_ball.lifetime <= 0) {
+				slowdown_ball.enabled = false;
+				slowdown_ball.spawn_cooldown = slowdown_ball.max_spawn_cooldown;
+			}
 		}
 
 		// Update powerup cooldown
@@ -255,10 +262,10 @@ void Update(float delta_time, sf::RenderWindow * window) {
 		
 			ball.ball_state = SLOWDOWN;
 			ball.ball->setFillColor(sf::Color::Green);
-			ball.powerup_cooldown = slowdown_ball.cooldown;
+			ball.powerup_cooldown = slowdown_ball.power_cooldown;
 			ball.speed = ball.speed - slowdown_ball.speed_effect;
 			ball.base_speed = ball.base_speed - slowdown_ball.speed_effect;
-			slowdown_ball.spawn_cooldown = 25;
+			slowdown_ball.spawn_cooldown = slowdown_ball.max_spawn_cooldown;
 			slowdown_ball.enabled = false;
 
 		}

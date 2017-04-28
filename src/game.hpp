@@ -43,10 +43,15 @@ struct Ball {
 struct SlowdownBall {
 
 	sf::CircleShape * shape;
-	bool enabled;
-	float cooldown;
-	float spawn_cooldown;
-	float speed_effect;
+
+	bool enabled; // Able to be picked up
+	float power_cooldown; // How long the powerup lasts
+	float max_lifetime; // How long it stays in the arena
+	float max_spawn_cooldown; // How long until it respawns
+	float speed_effect; // The effect it has on ball speed
+
+	float spawn_cooldown; // How much longer until it can spawn again
+	float lifetime; // How much longer until it disappears from the arena
 
 };
 
