@@ -10,7 +10,7 @@ int main() {
 	sf::ContextSettings settings;
 	settings.antialiasingLevel = 4;
 
-	sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Game", sf::Style::Close, settings);
+	sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Game", sf::Style::Fullscreen, settings);
 	window.setMouseCursorVisible(false);
 	window.setMouseCursorGrabbed(true);
 
@@ -31,6 +31,26 @@ int main() {
 				case sf::Event::Closed: {
 				
 					running = false;
+
+				} break;
+
+				case sf::Event::MouseButtonPressed: {
+				
+					if (window_event.mouseButton.button == sf::Mouse::Left) {
+					
+						input_bits |= ILEFTCLICK;
+
+					}
+
+				} break;
+
+				case sf::Event::MouseButtonReleased: {
+
+					if (window_event.mouseButton.button == sf::Mouse::Left) {
+
+						input_bits &= ~ILEFTCLICK;
+
+					}
 
 				} break;
 

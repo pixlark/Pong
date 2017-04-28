@@ -9,7 +9,8 @@ enum InputBit {
 	ILEFT = 2,
 	IBACKWARDS = 4,
 	IRIGHT = 8,
-	IRETURN = 16
+	IRETURN = 16,
+	ILEFTCLICK = 32
 	
 };
 

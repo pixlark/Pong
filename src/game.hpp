@@ -6,7 +6,8 @@
 enum GameState {
 
 	PLAYING,
-	PAUSED
+	PAUSED,
+	GAME_OVER
 
 };
 
