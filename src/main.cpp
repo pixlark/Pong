@@ -10,7 +10,7 @@ int main() {
 	sf::ContextSettings settings;
 	settings.antialiasingLevel = 4;
 
-	sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Game", sf::Style::Fullscreen, settings);
+	sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Game", sf::Style::Close, settings);
 	window.setMouseCursorVisible(false);
 	window.setMouseCursorGrabbed(true);
 

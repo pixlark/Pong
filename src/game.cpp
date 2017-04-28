@@ -11,17 +11,8 @@ ControlType control_type;
 
 float game_time;
 
-sf::RectangleShape paddle;
-sf::Vector2f paddle_size(30, 150);
-float paddle_speed = 1000;
-float paddle_offset = 50;
-uint8_t lpp_size = 50;
-
-sf::RectangleShape ball;
-float ball_speed = 700;
-float next_ball_speed;
-sf::Vector2f ball_direction(1, 0.5);
-sf::Vector2f ball_size(30, 30);
+Paddle paddle;
+Ball ball;
 
 sf::Font * default_font;
 sf::Text timer_text;
@@ -54,15 +45,22 @@ void Initialize() {
 
 	sf::Color paddle_color = sf::Color::White;
 
-	paddle.setFillColor(paddle_color);
-	paddle.setSize(paddle_size);
-	paddle.setOrigin(paddle_size.x/2, paddle_size.y/2);
-	paddle.setPosition(SCREEN_WIDTH-paddle_offset, SCREEN_HEIGHT/2);
+	//@Refactor: There's a whole lotta initialization going on here
+	paddle.paddle = new sf::RectangleShape;
+	paddle.size = sf::Vector2f(30, 150);
+	paddle.paddle->setFillColor(paddle_color);
+	paddle.paddle->setSize(paddle.size);
+	paddle.paddle->setOrigin(paddle.size.x/2, paddle.size.y/2);
+	paddle.paddle->setPosition(SCREEN_WIDTH-paddle.offset, SCREEN_HEIGHT/2);
 
-	ball.setFillColor(paddle_color);
-	ball.setSize(ball_size);
-	ball.setOrigin(ball_size.x/2, ball_size.y/2);
-	ball.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+	//@Refactor: See above
+	ball.direction = sf::Vector2f(1, 0.5);
+	ball.size = sf::Vector2f(30, 30);
+	ball.ball = new sf::RectangleShape;
+	ball.ball->setFillColor(paddle_color);
+	ball.ball->setSize(ball.size);
+	ball.ball->setOrigin(ball.size.x/2, ball.size.y/2);
+	ball.ball->setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
 
 	cursor.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
 	cursor.setRadius(4);
@@ -75,11 +73,11 @@ void Update(float delta_time, sf::RenderWindow * window) {
 	
 		if (input_bits & ILEFTCLICK) {
 		
-			ball.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
-			ball_direction = sf::Vector2f(1, 0.5);
+			ball.ball->setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+			ball.direction = sf::Vector2f(1, 0.5);
 
 			game_time = 0;
-			ball_speed = 1000;
+			ball.speed = 1000;
 
 			game_state = PLAYING;
 
@@ -91,19 +89,19 @@ void Update(float delta_time, sf::RenderWindow * window) {
 		game_time += delta_time;
 
 	if (game_time > 100)
-		next_ball_speed = 2500;
+		ball.next_speed = 2500;
 	else if (game_time > 75)
-		next_ball_speed = 2000;
+		ball.next_speed = 2000;
 	else  if (game_time > 50)
-		next_ball_speed = 1800;
+		ball.next_speed = 1800;
 	else if (game_time > 30)
-		next_ball_speed = 1500;
+		ball.next_speed = 1500;
 	else if (game_time > 15)
-		next_ball_speed = 1200;
+		ball.next_speed = 1200;
 	else if (game_time > 7)
-		next_ball_speed = 1000;
+		ball.next_speed = 1000;
 	else
-		next_ball_speed = 800;
+		ball.next_speed = 800;
 
 	////////////////
 	// TIMER TEXT //
@@ -138,71 +136,70 @@ void Update(float delta_time, sf::RenderWindow * window) {
 		// PADDLE MOVEMENT //
 		/////////////////////
 
-		//last_paddle_pos = paddle.getPosition();
-		paddle.move(0, mouse_vector.y / game_settings.sensitivity);
+		paddle.paddle->move(0, mouse_vector.y / game_settings.sensitivity);
 
 		///////////////////
 		// BALL MOVEMENT //
 		///////////////////
 
-		sf::Vector2f next_ball_pos = ball.getPosition() + (ball_speed * delta_time * ball_direction);
+		sf::Vector2f next_ball_pos = ball.ball->getPosition() + (ball.speed * delta_time * ball.direction);
 
 		// PADDLE COLLISION
-		if (next_ball_pos.x + ball_size.x / 2 > SCREEN_WIDTH - paddle_offset - paddle_size.x / 2 && 
-			next_ball_pos.x - ball_size.x / 2 < SCREEN_WIDTH - paddle_offset - paddle_size.x / 2) {
+		if (next_ball_pos.x + ball.size.x / 2 > SCREEN_WIDTH - paddle.offset - paddle.size.x / 2 && 
+			next_ball_pos.x - ball.size.x / 2 < SCREEN_WIDTH - paddle.offset - paddle.size.x / 2) {
 
-			if (next_ball_pos.y - ball_size.y / 2 < paddle.getPosition().y + paddle_size.y / 2 &&
-				next_ball_pos.y + ball_size.y / 2 > paddle.getPosition().y - paddle_size.y / 2) {
+			if (next_ball_pos.y - ball.size.y / 2 < paddle.paddle->getPosition().y + paddle.size.y / 2 &&
+				next_ball_pos.y + ball.size.y / 2 > paddle.paddle->getPosition().y - paddle.size.y / 2) {
 
-				ball_direction.x += 0.1;
-				ball_direction.x = -ball_direction.x;
+				ball.direction.x += 0.1;
+				ball.direction.x = -ball.direction.x;
 
-				if (ball_direction.y < 0.05 && ball_direction.y > -0.05) {
+				if (ball.direction.y < 0.05 && ball.direction.y > -0.05) {
 					
-					ball_direction.y *= 200;
+					ball.direction.y *= 200;
 
 				}
 
-				if (ball_direction.y < 0) {
+				if (ball.direction.y < 0) {
 				
-					ball_direction.y *= (((abs(paddle.getPosition().y + paddle_size.y / 2) - next_ball_pos.y) * 2) / paddle_size.y - 0.2);
+					ball.direction.y *= (((abs(paddle.paddle->getPosition().y + paddle.size.y / 2) - next_ball_pos.y) * 2) / paddle.size.y - 0.2);
 
-				} else if (ball_direction.y > 0) {
+				} else if (ball.direction.y > 0) {
 				
-					ball_direction.y *= -(((abs(paddle.getPosition().y - paddle_size.y / 2) - next_ball_pos.y) * 2) / paddle_size.y + 0.2);
+					ball.direction.y *= -(((abs(paddle.paddle->getPosition().y - paddle.size.y / 2) - next_ball_pos.y) * 2) / paddle.size.y + 0.2);
 
 				}
 
-				ball_speed = next_ball_speed;
+				ball.speed = ball.next_speed;
 
 			}
 
 		}
 
-		ball_direction = NormalizeVector(ball_direction);
+		ball.direction = NormalizeVector(ball.direction);
 
 		// WALL COLLISION
-		if (next_ball_pos.y + ball_size.y / 2 > SCREEN_HEIGHT || next_ball_pos.y - ball_size.y / 2 < 0) {
+		if (next_ball_pos.y + ball.size.y / 2 > SCREEN_HEIGHT || next_ball_pos.y - ball.size.y / 2 < 0) {
 
-			if (ball_direction.x < 0.2 && ball_direction.x > 0) {
-				ball_direction.x += 0.2;
-			} else if (ball_direction.x > -0.2 && ball_direction.x < 0) {
-				ball_direction.x += -0.2;
-			} else if (ball_direction.x == 0) {
-				ball_direction.x += -0.2;
+			if (ball.direction.x < 0.2 && ball.direction.x > 0) {
+				ball.direction.x += 0.2;
+			} else if (ball.direction.x > -0.2 && ball.direction.x < 0) {
+				ball.direction.x += -0.2;
+			} else if (ball.direction.x == 0) {
+				ball.direction.x += -0.2;
 			}
 
-			ball_direction.y = -ball_direction.y;
+			ball.direction.y = -ball.direction.y;
 
 		}
 
-		if (next_ball_pos.x - ball_size.x / 2 < 0) {
+		if (next_ball_pos.x - ball.size.x / 2 < 0) {
 		
-			ball_direction.x = -ball_direction.x;
+			ball.direction.x = -ball.direction.x;
 
 		}
 
-		next_ball_pos = ball.getPosition() + (ball_speed * delta_time * ball_direction);
+		next_ball_pos = ball.ball->getPosition() + (ball.speed * delta_time * ball.direction);
 
 		// OUT OF BOUNDS CHECK
 		if (next_ball_pos.x > SCREEN_WIDTH || next_ball_pos.x < 0) {
@@ -211,7 +208,7 @@ void Update(float delta_time, sf::RenderWindow * window) {
 
 		}
 
-		ball.setPosition(next_ball_pos);
+		ball.ball->setPosition(next_ball_pos);
 
 	}
 
@@ -221,8 +218,8 @@ void Update(float delta_time, sf::RenderWindow * window) {
 
 void Draw(sf::RenderWindow * window) {
 
-	window->draw(paddle);
-	window->draw(ball);
+	window->draw(*paddle.paddle);
+	window->draw(*ball.ball);
 	window->draw(timer_text);
 	if (game_settings.cursor_visible)
 		window->draw(cursor);
