@@ -30,15 +30,7 @@ enum GameState {
 
 };
 
-enum ControlType {
-
-	KEYBOARD,
-	MOUSE
-
-};
-
 extern GameState game_state;
-extern ControlType control_type;
 
 void Initialize();
 void Update(float delta_time, sf::RenderWindow * window);
