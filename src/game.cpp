@@ -178,7 +178,7 @@ float GetBallSpeed(float game_time) {
 
 bool GetSlowdownSpawn(float game_time, float delta_time) {
 
-	if (game_time > 0) {
+	if (game_time > 20) {
 		if (rand() % int(8'000'000 / delta_time) == 0) {
 			return true;
 		}
