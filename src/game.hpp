@@ -36,6 +36,7 @@ struct Ball {
 	sf::Vector2f direction;
 	sf::Vector2f size;
 	BallState ball_state;
+	float powerup_cooldown;
 
 };
 
@@ -44,6 +45,8 @@ struct SlowdownBall {
 	sf::CircleShape * shape;
 	bool enabled;
 	float cooldown;
+	float spawn_cooldown;
+	float speed_effect;
 
 };
 

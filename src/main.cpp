@@ -7,6 +7,8 @@
 
 int main() {
 
+	srand(time(0));
+
 	sf::ContextSettings settings;
 	settings.antialiasingLevel = 4;
 

@@ -67,10 +67,12 @@ void Initialize() {
 	// Slowdown powerup
 	slowdown_ball.shape = new sf::CircleShape;
 	slowdown_ball.shape->setFillColor(sf::Color::Green);
-	slowdown_ball.shape->setRadius(45);
+	slowdown_ball.shape->setRadius(25);
 	slowdown_ball.shape->setOrigin(slowdown_ball.shape->getRadius(), slowdown_ball.shape->getRadius());
 	slowdown_ball.shape->setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
-	slowdown_ball.enabled = true;
+	slowdown_ball.enabled = false;
+	slowdown_ball.cooldown = 10;
+	slowdown_ball.speed_effect = 500;
 
 	// Cursor
 	cursor.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
@@ -174,6 +176,18 @@ float GetBallSpeed(float game_time) {
 
 }
 
+bool GetSlowdownSpawn(float game_time, float delta_time) {
+
+	if (game_time > 0) {
+		if (rand() % int(8'000'000 / delta_time) == 0) {
+			return true;
+		}
+	}
+
+	return false;
+
+}
+
 void Update(float delta_time, sf::RenderWindow * window) {
 
 	// Update the mouse/cursor
@@ -191,6 +205,33 @@ void Update(float delta_time, sf::RenderWindow * window) {
 		// Update game time
 		game_time += delta_time;
 		ball.next_speed = ball.base_speed + GetBallSpeed(game_time);
+
+		// Spawn powerups
+		slowdown_ball.spawn_cooldown -= delta_time;
+		if (GetSlowdownSpawn(game_time, delta_time) && slowdown_ball.spawn_cooldown <= 0) {
+			slowdown_ball.enabled = true;
+		}
+
+		// Update powerup cooldown
+		if (ball.ball_state != REGULAR)
+			ball.powerup_cooldown -= delta_time;
+		if (ball.powerup_cooldown <= 0) {
+
+			switch (ball.ball_state) {
+			
+				case SLOWDOWN: {
+				
+					ball.ball->setFillColor(sf::Color::White);
+					ball.speed = ball.speed + slowdown_ball.speed_effect;
+					ball.base_speed = ball.base_speed + slowdown_ball.speed_effect;
+
+				} break;
+
+			}
+
+			ball.ball_state = REGULAR;
+
+		}
 
 		// Update timer text
 		char timer_string[8];
@@ -214,6 +255,11 @@ void Update(float delta_time, sf::RenderWindow * window) {
 		
 			ball.ball_state = SLOWDOWN;
 			ball.ball->setFillColor(sf::Color::Green);
+			ball.powerup_cooldown = slowdown_ball.cooldown;
+			ball.speed = ball.speed - slowdown_ball.speed_effect;
+			ball.base_speed = ball.base_speed - slowdown_ball.speed_effect;
+			slowdown_ball.spawn_cooldown = 25;
+			slowdown_ball.enabled = false;
 
 		}
 
