@@ -3,6 +3,21 @@
 
 #include <SFML/Graphics.hpp>
 
+enum GameState {
+
+	PLAYING,
+	PAUSED,
+	GAME_OVER
+
+};
+
+enum BallState {
+
+	REGULAR,
+	SLOWDOWN
+
+};
+
 struct Paddle {
 
 	sf::RectangleShape * paddle;
@@ -15,18 +30,20 @@ struct Paddle {
 struct Ball {
 
 	sf::RectangleShape * ball;
-	float speed = 700;
+	float speed;
 	float next_speed;
+	float base_speed = 800;
 	sf::Vector2f direction;
 	sf::Vector2f size;
+	BallState ball_state;
 
 };
 
-enum GameState {
+struct SlowdownBall {
 
-	PLAYING,
-	PAUSED,
-	GAME_OVER
+	sf::CircleShape * shape;
+	bool enabled;
+	float cooldown;
 
 };
 

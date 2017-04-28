@@ -1,0 +1,4 @@
+* Feature ideas:
+** Green ball appears in center of arena for 5-6 seconds. If hit, ball turns green and slows down for a little while.
+** Holes appearing in edges of arena that kill the ball.
+** Demon paddle appearing that imitates player paddle and kills the ball if hit.
